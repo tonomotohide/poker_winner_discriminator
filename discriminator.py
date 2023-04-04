@@ -36,12 +36,15 @@ def get_strongest_hand_rank(dealt_card,board_card):
 
         # 作れる役と今までの最良役と比較する
         if combination[0] > best_combination[0]:
+            # 役が上回っている
             best_combination = combination
         elif combination[0] == best_combination[0]:
+            # 役が同じ時は数字を比べる
             for i in range(5):
-                if combination[1][i] > best_combination[1][i]:
-                    best_combination = combination
+                if combination[1][i] < best_combination[1][i]:
                     break
+            else:
+                best_combination = combination
 
     return best_combination
 
@@ -64,11 +67,11 @@ def get_hand_ranking(five_cards):
     if suits["s"] == 5 or suits["h"] == 5 or suits["d"] == 5 or suits["c"] == 5:
         # 単一スート時の処理
         if numbers[0] - numbers[4] == 4:
-            return [9,numbers]                      # Straight Flash
+            return [9,numbers]              # Straight Flash
         elif numbers[0] == 14 and numbers[1] - numbers[4] == 3:
-            return [9,numbers[1:] + [1]]   # Straight Flash
+            return [9,numbers[1:] + [1]]    # Straight Flash
         else:
-            return [6,numbers]  # Flash
+            return [6,numbers]              # Flash
     else:
         # 非単一スート時の処理
         counted = collections.Counter(numbers)
@@ -78,17 +81,20 @@ def get_hand_ranking(five_cards):
             for i in range(v):
                 cards_counts[v].append(k)
 
-        if len(cards_counts[4]) == 1:
-            return [8,cards_counts[4] + cards_counts[1]]
+        for i in range(1,4):
+            cards_counts[i].sort(reverse=False)
+
+        if len(cards_counts[4]) == 4:
+            return [8,cards_counts[4] + cards_counts[1]]        # four of a kind
         elif len(cards_counts[3]) == 3:
             if len(cards_counts[2]) == 2:
-                return [7,cards_counts[3] + cards_counts[2]]
+                return [7,cards_counts[3] + cards_counts[2]]    # full house
             else:
-                return [4,cards_counts[3] + cards_counts[1]]
+                return [4,cards_counts[3] + cards_counts[1]]    # three cards
         elif len(cards_counts[2]) == 4:
-            return [3,cards_counts[2] + cards_counts[1]]
+            return [3,cards_counts[2] + cards_counts[1]]        # two pair
         elif len(cards_counts[2]) == 2:
-            return [2,cards_counts[2] + cards_counts[1]]
+            return [2,cards_counts[2] + cards_counts[1]]        # pair
         else:
             if numbers[0] - numbers[4] == 4:
                 return [5,numbers]                      # Straight
