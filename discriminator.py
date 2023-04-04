@@ -67,9 +67,12 @@ def get_hand_ranking(five_cards):
     if suits["s"] == 5 or suits["h"] == 5 or suits["d"] == 5 or suits["c"] == 5:
         # 単一スート時の処理
         if numbers[0] - numbers[4] == 4:
-            return [9,numbers]              # Straight Flash
-        elif numbers[0] == 14 and numbers[1] - numbers[4] == 3:
-            return [9,numbers[1:] + [1]]    # Straight Flash
+            if numbers[0] == 14:            # Royal Flash
+                return [10,numbers]
+            else:
+                return [9,numbers]          # Straight Flash
+        elif numbers[0] == 14 and numbers[1] == 5 and numbers[1] - numbers[4] == 3:
+            return [9,numbers[1:] + [1]]    # Straight Flash(wheel)
         else:
             return [6,numbers]              # Flash
     else:
@@ -82,7 +85,7 @@ def get_hand_ranking(five_cards):
                 cards_counts[v].append(k)
 
         for i in range(1,4):
-            cards_counts[i].sort(reverse=False)
+            cards_counts[i].sort(reverse=True)
 
         if len(cards_counts[4]) == 4:
             return [8,cards_counts[4] + cards_counts[1]]        # four of a kind
